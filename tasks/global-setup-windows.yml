@@ -35,6 +35,18 @@
     - restart_gitlab_runner
     - restart_gitlab_runner_windows
 
+- name: Add log_format to config
+  win_lineinfile:
+    dest: "{{ gitlab_runner_config_file }}"
+    regexp: '^log_format ='
+    line: 'log_format = "{{ gitlab_runner_log_format|default("runner") }}"'
+    insertbefore: BOF
+    state: present
+  when: gitlab_runner_log_format is defined # Ensure value is set
+  notify:
+    - restart_gitlab_runner
+    - restart_gitlab_runner_windows
+
 - name: (Windows) Add sentry dsn to config
   win_lineinfile:
     dest: "{{ gitlab_runner_config_file }}"
